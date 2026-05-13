@@ -1,0 +1,13 @@
+.git
+.gitignore
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+android/
+ios/
+linux/
+macos/
+windows/
+test/
