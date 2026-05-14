@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/login_screen.dart';
+import 'package:flutter_application_1/screens/flight_history_screen.dart';
 import '../theme_manager.dart';
 
 class MainDashboardScreen extends StatelessWidget {
@@ -17,7 +18,14 @@ class MainDashboardScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 100),
             _buildDrawerItem(Icons.settings, "CONFIGURACIÓN", () {}, isDark),
-            _buildDrawerItem(Icons.history, "HISTORIAL", () {}, isDark),
+            _buildDrawerItem(Icons.history, "HISTORIAL", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FlightHistoryScreen(),
+                ),
+              );
+            }, isDark),
             _buildDrawerItem(
               isDark
                   ? Icons.wb_sunny_outlined
