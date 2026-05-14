@@ -17,12 +17,7 @@ class MainDashboardScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 100),
             _buildDrawerItem(Icons.settings, "CONFIGURACIÓN", () {}, isDark),
-            _buildDrawerItem(
-              Icons.history,
-              "HISTORIAL DE VUELO",
-              () {},
-              isDark,
-            ),
+            _buildDrawerItem(Icons.history, "HISTORIAL", () {}, isDark),
             _buildDrawerItem(
               isDark
                   ? Icons.wb_sunny_outlined
