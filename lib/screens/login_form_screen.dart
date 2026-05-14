@@ -135,7 +135,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                     );
                   },
                   child: Text(
-                    "¿Olvidó su acceso?",
+                    "¿Olvidaste tu acceso?",
                     style: TextStyle(
                       color: isDark ? Colors.white38 : Colors.black54,
                       fontSize: 12,
