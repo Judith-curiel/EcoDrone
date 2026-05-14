@@ -11,11 +11,14 @@ class LoginFormScreen extends StatefulWidget {
 }
 
 class _LoginFormScreenState extends State<LoginFormScreen> {
-  // 1. CONTROLADORES para capturar el texto
+  // Variable para controlar la visibilidad de la contraseña
+  bool _passwordVisible = false;
+
+  // CONTROLADORES para capturar el texto
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
-  // 2. FUNCIÓN PARA ENVIAR EL JSON AL BACKEND
+  // FUNCIÓN PARA INICIAR SESIÓN
   void _iniciarSesion() async {
     String username = _userController.text.trim();
     String password = _passController.text;
@@ -28,11 +31,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     }
 
     try {
-      // 1. Llamamos al servicio que creaste
       final resultado = await ApiService.login(username, password);
 
       if (resultado != null) {
-        // 2. Si todo sale bien, navegamos al Dashboard
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -43,7 +44,6 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
         }
       }
     } catch (e) {
-      // 3. Si hay un error (usuario incorrecto, servidor caído, etc.)
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -62,7 +62,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     final textFieldBorder = isDark ? Colors.white10 : Colors.black12;
     final accentColor = isDark
         ? const Color(0xFF5CEEFB)
-        : const Color(0xFF00838F); // Un azul más oscuro para modo claro
+        : const Color(0xFF00838F);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -95,6 +95,8 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                 ),
               ),
               const SizedBox(height: 50),
+
+              // Campo de Usuario
               _buildTextField(
                 label: "NOMBRE DE USUARIO",
                 icon: Icons.person_outline,
@@ -104,7 +106,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                 fillColor: textFieldFill,
                 borderColor: textFieldBorder,
               ),
+
               const SizedBox(height: 25),
+
+              // Campo de Contraseña (con el ojito)
               _buildTextField(
                 label: "CONTRASEÑA",
                 icon: Icons.lock_outline,
@@ -115,7 +120,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                 fillColor: textFieldFill,
                 borderColor: textFieldBorder,
               ),
+
               const SizedBox(height: 15),
+
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -136,7 +143,9 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 40),
+
               GestureDetector(
                 onTap: _iniciarSesion,
                 child: Container(
@@ -173,6 +182,7 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     );
   }
 
+  // Método auxiliar para construir los campos de texto
   Widget _buildTextField({
     required String label,
     required IconData icon,
@@ -184,9 +194,10 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
     bool isPassword = false,
   }) {
     const greenAccent = Color(0xFF92FA67);
+
     return TextField(
       controller: controller,
-      obscureText: isPassword,
+      obscureText: isPassword ? !_passwordVisible : false,
       style: TextStyle(color: textColor, fontSize: 14),
       decoration: InputDecoration(
         filled: true,
@@ -197,6 +208,21 @@ class _LoginFormScreenState extends State<LoginFormScreen> {
           fontSize: 11,
         ),
         prefixIcon: Icon(icon, color: greenAccent, size: 20),
+        // Lógica del icono del ojo
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+              )
+            : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: borderColor),
