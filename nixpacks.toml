@@ -1,5 +1,8 @@
 [phases.setup]
-nixPkgs = ["python3"]
+nixPkgs = ["flutter"]
+
+[phases.build]
+commands = ["flutter pub get", "flutter build web"]
 
 [start]
-cmd = "python3 -m http.server $PORT --directory build/web"
+command = "python3 -m http.server $PORT --directory build/web"
