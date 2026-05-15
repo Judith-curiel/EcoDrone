@@ -1,8 +1,5 @@
 [phases.setup]
 nixPkgs = ["python3"]
 
-[phases.build]
-cmds = ["echo 'Saltando build, usando archivos locales'"]
-
 [start]
 cmd = "python3 -m http.server $PORT --directory build/web"
