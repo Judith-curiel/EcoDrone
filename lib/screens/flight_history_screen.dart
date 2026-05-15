@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -301,20 +303,16 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     double latRange,
     double lngRange,
   ) {
-    final columns = (count / 5).ceil();
-    final rows = (count / columns).ceil();
+    final random = Random(1234 + count);
 
     return List.generate(count, (index) {
-      final row = index ~/ columns;
-      final col = index % columns;
-      final latFraction = (row + 0.5) / rows - 0.5;
-      final lngFraction = (col + 0.5) / columns - 0.5;
+      final angle = random.nextDouble() * 2 * pi;
+      final radius = random.nextDouble();
+      final latOffset = cos(angle) * radius * latRange * 0.75;
+      final lngOffset = sin(angle) * radius * lngRange * 0.75;
 
       return BottlePoint(
-        LatLng(
-          center.latitude + latFraction * latRange,
-          center.longitude + lngFraction * lngRange,
-        ),
+        LatLng(center.latitude + latOffset, center.longitude + lngOffset),
         flight,
       );
     });
