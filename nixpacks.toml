@@ -2,7 +2,7 @@
 nixPkgs = ["python3"]
 
 [phases.build]
-cmds = ["echo 'Desplegando build local'"]
+cmds = ["echo 'Listo para servir'"]
 
-[phases.start]
-cmds = ["python3 -m http.server $PORT --directory build/web"]
+[start]
+cmd = "python3 -m http.server $PORT --directory build/web"
