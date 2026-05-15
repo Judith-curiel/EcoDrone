@@ -1,4 +1,4 @@
-name: flutter_application_1
+name: EcoDrone_AI
 description: "A new Flutter project."
 publish_to: 'none'
 
@@ -10,21 +10,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  
+  
   cupertino_icons: ^1.0.8
   video_player: ^2.8.1
   http: ^1.2.0
   shared_preferences: ^2.2.2
-  google_maps_flutter: ^2.5.3
+  flutter_map: ^8.3.0
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.4
- 
 
-flutter_icons:
+# CONFIGURACIÓN DE ICONO DE LA APP
+flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/logo.png"
@@ -33,6 +35,7 @@ flutter_icons:
 flutter:
   uses-material-design: true
 
+  # ACTIVACIÓN DE ASSETS (IMÁGENES Y VIDEOS)
   assets:
     - assets/logo.png
     - assets/logo_nombre.png

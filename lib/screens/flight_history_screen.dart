@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class FlightHistoryScreen extends StatelessWidget {
   const FlightHistoryScreen({super.key});
@@ -177,35 +178,29 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapScreenState extends State<FlightMapScreen> {
-  late GoogleMapController mapController;
+  final LatLng _center = LatLng(19.4326, -99.1332); // Ejemplo: Ciudad de México
 
-  final LatLng _center = const LatLng(
-    19.4326,
-    -99.1332,
-  ); // Ejemplo: Ciudad de México
-
-  final Set<Marker> _markers = {
+  final List<Marker> _markers = [
     Marker(
-      markerId: MarkerId('bottle1'),
-      position: LatLng(19.4326, -99.1332),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      width: 40,
+      height: 40,
+      point: LatLng(19.4326, -99.1332),
+      child: const Icon(Icons.location_on, color: Colors.red, size: 35),
     ),
     Marker(
-      markerId: MarkerId('bottle2'),
-      position: LatLng(19.4330, -99.1340),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      width: 40,
+      height: 40,
+      point: LatLng(19.4330, -99.1340),
+      child: const Icon(Icons.location_on, color: Colors.red, size: 35),
     ),
     Marker(
-      markerId: MarkerId('bottle3'),
-      position: LatLng(19.4315, -99.1325),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      width: 40,
+      height: 40,
+      point: LatLng(19.4315, -99.1325),
+      child: const Icon(Icons.location_on, color: Colors.red, size: 35),
     ),
     // Agregar más marcadores según sea necesario
-  };
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -232,10 +227,16 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
         ),
       ),
       body: SafeArea(
-        child: GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(target: _center, zoom: 15.0),
-          markers: _markers,
+        child: FlutterMap(
+          options: MapOptions(initialCenter: _center, initialZoom: 15.0),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+              subdomains: const ['a', 'b', 'c'],
+              userAgentPackageName: 'com.example.ecodrone_ai',
+            ),
+            MarkerLayer(markers: _markers),
+          ],
         ),
       ),
     );

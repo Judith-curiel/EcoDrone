@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/login_screen.dart';
-import 'package:flutter_application_1/screens/flight_history_screen.dart';
+import 'login_screen.dart';
+import 'flight_history_screen.dart';
 import '../theme_manager.dart';
 
 class MainDashboardScreen extends StatelessWidget {
@@ -92,11 +92,11 @@ class MainDashboardScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.black.withValues(alpha: 0.05),
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFF5CEEFB).withValues(alpha: 0.3),
+                    color: const Color(0xFF5CEEFB).withOpacity(0.3),
                   ),
                 ),
                 child: Column(
@@ -124,8 +124,8 @@ class MainDashboardScreen extends StatelessWidget {
                       "Unidad EcoDrone-01 vinculada correctamente.",
                       style: TextStyle(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.5)
-                            : Colors.black.withValues(alpha: 0.5),
+                            ? Colors.white.withOpacity(0.5)
+                            : Colors.black.withOpacity(0.5),
                         fontSize: 13,
                       ),
                     ),
