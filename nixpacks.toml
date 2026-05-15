@@ -1,8 +1,15 @@
+[variables]
+FLUTTER_VERSION = "3.32.0"
+
 [phases.setup]
 nixPkgs = ["flutter"]
 
 [phases.build]
-commands = ["flutter pub get", "flutter build web"]
+commands = [
+  "flutter --version",
+  "flutter pub get",
+  "flutter build web"
+]
 
 [start]
 command = "python3 -m http.server $PORT --directory build/web"
