@@ -35,46 +35,46 @@ class FlightHistoryScreen extends StatelessWidget {
           children: [
             _buildFlightItem(
               context,
-              'Vuelo 1 - Zona A',
+              'Vuelo 1 - Fútbol Tec Valles',
               'Fecha: 2023-10-01',
               'Duración: 45 min',
+              'Botellas recolectadas: 30',
+              isDark,
+            ),
+            const SizedBox(height: 20),
+            _buildFlightItem(
+              context,
+              'Vuelo 2 - Voleibol de Playa Tec',
+              'Fecha: 2023-10-02',
+              'Duración: 52 min',
+              'Botellas recolectadas: 16',
+              isDark,
+            ),
+            const SizedBox(height: 20),
+            _buildFlightItem(
+              context,
+              'Vuelo 3 - Béisbol Tec Valles',
+              'Fecha: 2023-10-03',
+              'Duración: 38 min',
               'Botellas recolectadas: 12',
               isDark,
             ),
             const SizedBox(height: 20),
             _buildFlightItem(
               context,
-              'Vuelo 2 - Zona B',
-              'Fecha: 2023-10-02',
-              'Duración: 52 min',
-              'Botellas recolectadas: 18',
-              isDark,
-            ),
-            const SizedBox(height: 20),
-            _buildFlightItem(
-              context,
-              'Vuelo 3 - Zona C',
-              'Fecha: 2023-10-03',
-              'Duración: 38 min',
-              'Botellas recolectadas: 9',
-              isDark,
-            ),
-            const SizedBox(height: 20),
-            _buildFlightItem(
-              context,
-              'Vuelo 4 - Zona A',
+              'Vuelo 4 - Campo de Fútbol',
               'Fecha: 2023-10-04',
               'Duración: 41 min',
-              'Botellas recolectadas: 15',
+              'Botellas recolectadas: 14',
               isDark,
             ),
             const SizedBox(height: 20),
             _buildFlightItem(
               context,
-              'Vuelo 5 - Zona D',
+              'Vuelo 5 - Centro de Cómputo / Info / D1-D2',
               'Fecha: 2023-10-05',
               'Duración: 49 min',
-              'Botellas recolectadas: 22',
+              'Botellas recolectadas: 18',
               isDark,
             ),
           ],
@@ -178,8 +178,8 @@ class FlightMapScreen extends StatefulWidget {
 }
 
 class _FlightMapScreenState extends State<FlightMapScreen> {
-  // Ciudad Vallés, Estado de México
-  final LatLng _center = LatLng(19.6400, -99.1700);
+  late LatLng _center;
+  late String _locationLabel;
 
   // Modelo para cada punto de botella
   late List<BottlePoint> bottlePoints;
@@ -187,38 +187,135 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
   @override
   void initState() {
     super.initState();
-    // Generar puntos dispersos alrededor de Ciudad Vallés
-    bottlePoints = _generateBottlePoints();
+    _center = _getCenterForFlight(widget.flightTitle);
+    _locationLabel = _getLocationLabel(widget.flightTitle);
+    bottlePoints = _generateBottlePoints(widget.flightTitle);
   }
 
-  List<BottlePoint> _generateBottlePoints() {
-    return [
-      BottlePoint(LatLng(19.6400, -99.1700), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6402, -99.1698), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6398, -99.1702), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6405, -99.1705), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6395, -99.1695), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6403, -99.1703), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6397, -99.1699), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6401, -99.1701), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6404, -99.1697), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6396, -99.1704), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6402, -99.1702), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6399, -99.1698), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6406, -99.1699), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6394, -99.1701), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6403, -99.1695), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6400, -99.1704), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6407, -99.1702), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6395, -99.1697), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6401, -99.1699), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6398, -99.1705), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6404, -99.1701), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6396, -99.1696), 'Vuelo 3'),
-      BottlePoint(LatLng(19.6403, -99.1704), 'Vuelo 1'),
-      BottlePoint(LatLng(19.6399, -99.1700), 'Vuelo 2'),
-      BottlePoint(LatLng(19.6405, -99.1698), 'Vuelo 3'),
-    ];
+  LatLng _getCenterForFlight(String flightTitle) {
+    if (flightTitle.contains('Fútbol Tec Valles')) {
+      return const LatLng(22.0218119, -99.0385418);
+    }
+    if (flightTitle.contains('Voleibol de Playa Tec')) {
+      return const LatLng(22.0220632, -99.0377007);
+    }
+    if (flightTitle.contains('Béisbol Tec Valles')) {
+      return const LatLng(22.022019, -99.0368729);
+    }
+    if (flightTitle.contains('Campo de Fútbol')) {
+      return const LatLng(22.0212615, -99.0367921);
+    }
+    if (flightTitle.contains('Centro de Cómputo') ||
+        flightTitle.contains('Centro de Información') ||
+        flightTitle.contains('D1') ||
+        flightTitle.contains('D2')) {
+      return const LatLng(22.0224149, -99.0360122);
+    }
+    return const LatLng(22.0217063, -99.0354064);
+  }
+
+  String _getLocationLabel(String flightTitle) {
+    if (flightTitle.contains('Fútbol Tec Valles')) {
+      return 'Fútbol Tec Valles';
+    }
+    if (flightTitle.contains('Voleibol de Playa Tec')) {
+      return 'Voleibol de Playa Tec Valles';
+    }
+    if (flightTitle.contains('Béisbol Tec Valles')) {
+      return 'Béisbol Tec Valles';
+    }
+    if (flightTitle.contains('Campo de Fútbol')) {
+      return 'Campo de Fútbol';
+    }
+    if (flightTitle.contains('Centro de Cómputo') ||
+        flightTitle.contains('Centro de Información') ||
+        flightTitle.contains('D1') ||
+        flightTitle.contains('D2')) {
+      return 'Centro de Cómputo / Centro de Información / D1-D2';
+    }
+    return 'Ciudad Valles, S.L.P.';
+  }
+
+  List<BottlePoint> _generateBottlePoints(String flightTitle) {
+    if (flightTitle.contains('Fútbol Tec Valles')) {
+      return _generateClusterPoints(
+        const LatLng(22.0218119, -99.0385418),
+        30,
+        flightTitle,
+        0.00012,
+        0.00012,
+      );
+    }
+    if (flightTitle.contains('Voleibol de Playa Tec')) {
+      return _generateClusterPoints(
+        const LatLng(22.0220632, -99.0377007),
+        25,
+        flightTitle,
+        0.00008,
+        0.00008,
+      );
+    }
+    if (flightTitle.contains('Béisbol Tec Valles')) {
+      return _generateClusterPoints(
+        const LatLng(22.022019, -99.0368729),
+        15,
+        flightTitle,
+        0.00007,
+        0.00007,
+      );
+    }
+    if (flightTitle.contains('Campo de Fútbol')) {
+      return _generateClusterPoints(
+        const LatLng(22.0212615, -99.0367921),
+        50,
+        flightTitle,
+        0.00014,
+        0.00014,
+      );
+    }
+    if (flightTitle.contains('Centro de Cómputo') ||
+        flightTitle.contains('Centro de Información') ||
+        flightTitle.contains('D1') ||
+        flightTitle.contains('D2')) {
+      return _generateClusterPoints(
+        const LatLng(22.0224149, -99.0360122),
+        80,
+        flightTitle,
+        0.00016,
+        0.00016,
+      );
+    }
+    return _generateClusterPoints(
+      const LatLng(22.0217063, -99.0354064),
+      10,
+      flightTitle,
+      0.0001,
+      0.0001,
+    );
+  }
+
+  List<BottlePoint> _generateClusterPoints(
+    LatLng center,
+    int count,
+    String flight,
+    double latRange,
+    double lngRange,
+  ) {
+    return List.generate(count, (index) {
+      final row = index % 5;
+      final col = index % 7;
+      final latOffset =
+          ((row - 2) * 0.00002) + (col.isEven ? 0.00001 : -0.00001);
+      final lngOffset =
+          ((col - 3) * 0.00002) + (row.isEven ? 0.00001 : -0.00001);
+      return BottlePoint(
+        LatLng(
+          center.latitude + latOffset * latRange,
+          center.longitude + lngOffset * lngRange,
+        ),
+        flight,
+      );
+    });
   }
 
   List<Marker> _buildMarkers() {
@@ -411,7 +508,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
       body: Stack(
         children: [
           FlutterMap(
-            options: MapOptions(initialCenter: _center, initialZoom: 16.0),
+            options: MapOptions(initialCenter: _center, initialZoom: 17.0),
             children: [
               TileLayer(
                 urlTemplate:
@@ -485,7 +582,7 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                         size: 24,
                       ),
                       Text(
-                        '${(collectedPoints * 100 ~/ totalPoints).toStringAsFixed(0)}%',
+                        '${(collectedPoints * 100 / totalPoints).toStringAsFixed(0)}%',
                         style: const TextStyle(
                           color: Color(0xFF5CEEFB),
                           fontWeight: FontWeight.bold,
@@ -496,6 +593,32 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                     ],
                   ),
                 ],
+              ),
+            ),
+          ),
+          // Etiqueta de ubicación explícita
+          Positioned(
+            bottom: 15,
+            left: 15,
+            right: 15,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.black.withOpacity(0.7)
+                    : Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF5CEEFB).withOpacity(0.5),
+                ),
+              ),
+              child: Text(
+                'Ubicación: $_locationLabel',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontSize: 12,
+                ),
               ),
             ),
           ),
