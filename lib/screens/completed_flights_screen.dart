@@ -1,18 +1,20 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+
 import '../models/flight_record.dart';
 import '../services/flight_storage.dart';
 
-class FlightHistoryScreen extends StatefulWidget {
-  const FlightHistoryScreen({super.key});
+class CompletedFlightsScreen extends StatefulWidget {
+  const CompletedFlightsScreen({super.key});
 
   @override
-  State<FlightHistoryScreen> createState() => _FlightHistoryScreenState();
+  State<CompletedFlightsScreen> createState() => _CompletedFlightsScreenState();
 }
 
-class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
+class _CompletedFlightsScreenState extends State<CompletedFlightsScreen> {
   Map<String, int> _flightProgress = {};
   bool _isLoading = true;
 
@@ -32,13 +34,6 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
       _flightProgress = progress;
       _isLoading = false;
     });
-  }
-
-  List<FlightRecord> get _pendingFlights {
-    return FlightRecord.all.where((flight) {
-      final collected = _flightProgress[flight.id] ?? 0;
-      return collected < flight.totalBottles;
-    }).toList();
   }
 
   List<FlightRecord> get _completedFlights {
@@ -65,7 +60,7 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Historial de Vuelo',
+          'Vuelos Completados',
           style: TextStyle(
             color: isDark ? const Color(0xFF5CEEFB) : Colors.black87,
             fontWeight: FontWeight.bold,
@@ -75,50 +70,31 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
+            : _completedFlights.isEmpty
+            ? _buildEmptyMessage(
+                'No hay vuelos completados aún. Completa vuelos para verlos aquí.',
+              )
             : ListView(
                 padding: const EdgeInsets.all(20),
-                children: [
-                  _buildSectionTitle('Vuelos pendientes'),
-                  if (_pendingFlights.isEmpty)
-                    _buildEmptyMessage(
-                      'No hay vuelos pendientes, todos los vuelos alcanzaron 100%.',
-                    ),
-                  ..._pendingFlights.map(_buildFlightCard),
-                  const SizedBox(height: 20),
-                  _buildSectionTitle('Vuelos terminados'),
-                  if (_completedFlights.isEmpty)
-                    _buildEmptyMessage('Aún no hay vuelos terminados al 100%.'),
-                  ..._completedFlights.map(_buildFlightCard),
-                ],
+                children: _completedFlights.map(_buildFlightCard).toList(),
               ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-
   Widget _buildEmptyMessage(String message) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Text(
-        message,
-        style: TextStyle(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white.withOpacity(0.7)
-              : Colors.black.withOpacity(0.7),
-          fontSize: 14,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white.withOpacity(0.7)
+                : Colors.black.withOpacity(0.7),
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -126,9 +102,7 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
 
   Widget _buildFlightCard(FlightRecord flight) {
     final collected = _flightProgress[flight.id] ?? 0;
-    final progressPercent = (collected * 100 / flight.totalBottles)
-        .clamp(0, 100)
-        .toStringAsFixed(0);
+    final progressPercent = '100%';
 
     return GestureDetector(
       onTap: () async {
@@ -148,7 +122,7 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
               ? Colors.white.withOpacity(0.05)
               : Colors.black.withOpacity(0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF5CEEFB).withOpacity(0.3)),
+          border: Border.all(color: const Color(0xFF92FA67).withOpacity(0.3)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,11 +159,9 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
                   ),
                 ),
                 Text(
-                  '$progressPercent% ${collected >= flight.totalBottles ? 'completado' : 'pendiente'}',
-                  style: TextStyle(
-                    color: collected >= flight.totalBottles
-                        ? const Color(0xFF92FA67)
-                        : Colors.orangeAccent,
+                  '$progressPercent completado',
+                  style: const TextStyle(
+                    color: Color(0xFF92FA67),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

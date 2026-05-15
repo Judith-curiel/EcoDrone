@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'flight_history_screen.dart';
+import 'pending_flights_screen.dart';
+import 'completed_flights_screen.dart';
+import '../models/flight_record.dart';
+import '../services/flight_storage.dart';
 import '../theme_manager.dart';
 
 class MainDashboardScreen extends StatelessWidget {
@@ -14,7 +18,7 @@ class MainDashboardScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: Drawer(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        child: Column(
+        child: ListView(
           children: [
             const SizedBox(height: 100),
             _buildDrawerItem(Icons.settings, "CONFIGURACIÓN", () {}, isDark),
@@ -23,6 +27,22 @@ class MainDashboardScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const FlightHistoryScreen(),
+                ),
+              );
+            }, isDark),
+            _buildDrawerItem(Icons.pending_actions, "VUELOS PENDIENTES", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PendingFlightsScreen(),
+                ),
+              );
+            }, isDark),
+            _buildDrawerItem(Icons.check_circle, "VUELOS COMPLETADOS", () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CompletedFlightsScreen(),
                 ),
               );
             }, isDark),
@@ -112,7 +132,7 @@ class MainDashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Bienvenido, Operador",
+                      "Bienvenido al panel de vuelos",
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black87,
                         fontSize: 22,
@@ -120,14 +140,49 @@ class MainDashboardScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    Text(
-                      "Unidad EcoDrone-01 vinculada correctamente.",
-                      style: TextStyle(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.5)
-                            : Colors.black.withOpacity(0.5),
-                        fontSize: 13,
+                    FutureBuilder<Map<String, int>>(
+                      future: FlightStorage.loadAllCollectedCounts(
+                        FlightRecord.all.map((flight) => flight.id).toList(),
                       ),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Text(
+                            'Cargando estado de vuelos...',
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.5)
+                                  : Colors.black.withOpacity(0.5),
+                              fontSize: 13,
+                            ),
+                          );
+                        }
+
+                        final progress = snapshot.data!;
+                        final pending = FlightRecord.all
+                            .where(
+                              (flight) =>
+                                  (progress[flight.id] ?? 0) <
+                                  flight.totalBottles,
+                            )
+                            .length;
+                        final completed = FlightRecord.all
+                            .where(
+                              (flight) =>
+                                  (progress[flight.id] ?? 0) >=
+                                  flight.totalBottles,
+                            )
+                            .length;
+
+                        return Text(
+                          'Vuelos pendientes: $pending · Vuelos terminados: $completed',
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.5)
+                                : Colors.black.withOpacity(0.5),
+                            fontSize: 13,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

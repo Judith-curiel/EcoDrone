@@ -5,14 +5,14 @@ import 'package:latlong2/latlong.dart';
 import '../models/flight_record.dart';
 import '../services/flight_storage.dart';
 
-class FlightHistoryScreen extends StatefulWidget {
-  const FlightHistoryScreen({super.key});
+class PendingFlightsScreen extends StatefulWidget {
+  const PendingFlightsScreen({super.key});
 
   @override
-  State<FlightHistoryScreen> createState() => _FlightHistoryScreenState();
+  State<PendingFlightsScreen> createState() => _PendingFlightsScreenState();
 }
 
-class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
+class _PendingFlightsScreenState extends State<PendingFlightsScreen> {
   Map<String, int> _flightProgress = {};
   bool _isLoading = true;
 
@@ -41,13 +41,6 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
     }).toList();
   }
 
-  List<FlightRecord> get _completedFlights {
-    return FlightRecord.all.where((flight) {
-      final collected = _flightProgress[flight.id] ?? 0;
-      return collected >= flight.totalBottles;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -65,7 +58,7 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Historial de Vuelo',
+          'Vuelos Pendientes',
           style: TextStyle(
             color: isDark ? const Color(0xFF5CEEFB) : Colors.black87,
             fontWeight: FontWeight.bold,
@@ -75,50 +68,31 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
+            : _pendingFlights.isEmpty
+            ? _buildEmptyMessage(
+                'No hay vuelos pendientes. Todos los vuelos han alcanzado el 100%.',
+              )
             : ListView(
                 padding: const EdgeInsets.all(20),
-                children: [
-                  _buildSectionTitle('Vuelos pendientes'),
-                  if (_pendingFlights.isEmpty)
-                    _buildEmptyMessage(
-                      'No hay vuelos pendientes, todos los vuelos alcanzaron 100%.',
-                    ),
-                  ..._pendingFlights.map(_buildFlightCard),
-                  const SizedBox(height: 20),
-                  _buildSectionTitle('Vuelos terminados'),
-                  if (_completedFlights.isEmpty)
-                    _buildEmptyMessage('Aún no hay vuelos terminados al 100%.'),
-                  ..._completedFlights.map(_buildFlightCard),
-                ],
+                children: _pendingFlights.map(_buildFlightCard).toList(),
               ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
-        ),
-      ),
-    );
-  }
-
   Widget _buildEmptyMessage(String message) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Text(
-        message,
-        style: TextStyle(
-          color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white.withOpacity(0.7)
-              : Colors.black.withOpacity(0.7),
-          fontSize: 14,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white.withOpacity(0.7)
+                : Colors.black.withOpacity(0.7),
+            fontSize: 16,
+          ),
         ),
       ),
     );
@@ -185,11 +159,9 @@ class _FlightHistoryScreenState extends State<FlightHistoryScreen> {
                   ),
                 ),
                 Text(
-                  '$progressPercent% ${collected >= flight.totalBottles ? 'completado' : 'pendiente'}',
-                  style: TextStyle(
-                    color: collected >= flight.totalBottles
-                        ? const Color(0xFF92FA67)
-                        : Colors.orangeAccent,
+                  '$progressPercent% pendiente',
+                  style: const TextStyle(
+                    color: Colors.orangeAccent,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
