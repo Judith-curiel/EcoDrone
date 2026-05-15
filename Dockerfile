@@ -8,6 +8,4 @@ RUN flutter pub get
 
 RUN flutter build web
 
-EXPOSE 8080
-
-CMD ["python3", "-m", "http.server", "80", "--directory", "build/web"]
+CMD sh -c "python3 -m http.server $PORT --directory build/web"
