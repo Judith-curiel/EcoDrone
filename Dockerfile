@@ -10,4 +10,4 @@ RUN flutter build web
 
 EXPOSE 8080
 
-CMD ["python3", "-m", "http.server", "8080", "--directory", "build/web"]
+CMD ["python3", "-m", "http.server", "80", "--directory", "build/web"]
