@@ -301,17 +301,19 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
     double latRange,
     double lngRange,
   ) {
+    final columns = (count / 5).ceil();
+    final rows = (count / columns).ceil();
+
     return List.generate(count, (index) {
-      final row = index % 5;
-      final col = index % 7;
-      final latOffset =
-          ((row - 2) * 0.00002) + (col.isEven ? 0.00001 : -0.00001);
-      final lngOffset =
-          ((col - 3) * 0.00002) + (row.isEven ? 0.00001 : -0.00001);
+      final row = index ~/ columns;
+      final col = index % columns;
+      final latFraction = (row + 0.5) / rows - 0.5;
+      final lngFraction = (col + 0.5) / columns - 0.5;
+
       return BottlePoint(
         LatLng(
-          center.latitude + latOffset * latRange,
-          center.longitude + lngOffset * lngRange,
+          center.latitude + latFraction * latRange,
+          center.longitude + lngFraction * lngRange,
         ),
         flight,
       );
