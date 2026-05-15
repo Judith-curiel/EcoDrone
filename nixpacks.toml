@@ -1,8 +1,8 @@
 [phases.setup]
-nixPkgs = ["flutter"]
+nixPkgs = ["flutter", "nodejs"]
 
 [phases.build]
-cmds = ["flutter build web"]
+cmds = ["flutter build web --release"]
 
-[phases.start]
-cmds = ["python3 -m http.server $PORT --directory build/web"]
+[start]
+cmd = "npx serve build/web --listen $PORT"
