@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/flight_record.dart';
+import '../screens/statistics_screen.dart';
 import '../services/flight_storage.dart';
 
 class PendingFlightsScreen extends StatefulWidget {
@@ -453,26 +454,56 @@ class _FlightMapScreenState extends State<FlightMapScreen> {
                             ),
                           ],
                         ),
-                        Column(
-                          children: [
-                            const Icon(
-                              Icons.bar_chart,
-                              color: Color(0xFF5CEEFB),
-                              size: 24,
-                            ),
-                            Text(
-                              '${(collectedPoints * 100 / totalPoints).toStringAsFixed(0)}%',
-                              style: const TextStyle(
-                                color: Color(0xFF5CEEFB),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white10 : Colors.black12,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => StatisticsScreen(
+                                      flight: widget.flight,
+                                      collected: collectedPoints,
+                                      total: totalPoints,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                  horizontal: 12,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.bar_chart,
+                                      color: Color(0xFF5CEEFB),
+                                      size: 24,
+                                    ),
+                                    Text(
+                                      '${(collectedPoints * 100 / totalPoints).toStringAsFixed(0)}%',
+                                      style: const TextStyle(
+                                        color: Color(0xFF5CEEFB),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const Text(
+                                      'Progreso',
+                                      style: TextStyle(fontSize: 10),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            const Text(
-                              'Progreso',
-                              style: TextStyle(fontSize: 10),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
